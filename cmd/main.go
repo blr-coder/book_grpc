@@ -2,7 +2,8 @@ package main
 
 import (
 	v1 "github.com/blr-coder/book_grpc/api/v1"
-	"github.com/blr-coder/book_grpc/pkg"
+	delivery "github.com/blr-coder/book_grpc/internal/delivery/grpc"
+	"github.com/blr-coder/book_grpc/internal/repositories"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -12,7 +13,8 @@ func main() {
 	log.Println("Go GRPC")
 
 	server := grpc.NewServer()
-	bookGRPCServer := &pkg.BookGRPCServer{}
+	bookRepository := repositories.NewBookRepository()
+	bookGRPCServer := &delivery.NewBookGRPCServer(bookRepository)
 	v1.RegisterBookServer(server, bookGRPCServer)
 
 	listener, err := net.Listen("tcp", ":8040")
