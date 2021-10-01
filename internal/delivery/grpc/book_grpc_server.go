@@ -3,8 +3,8 @@ package grpc
 import (
 	"context"
 	v1 "github.com/blr-coder/book_grpc/api/v1"
+	"github.com/blr-coder/book_grpc/internal/domain/models"
 	"github.com/blr-coder/book_grpc/internal/repositories"
-	"github.com/blr-coder/book_grpc/models"
 )
 
 type BookGRPCServer struct{
