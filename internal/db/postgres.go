@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"log"
 	"os"
 	"time"
 	// DB driver
@@ -21,6 +22,8 @@ func NewDBClient() (dbClient *sqlx.DB, err error) {
 	dbPort:= os.Getenv("DB_PORT")
 
 	dbUri := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=disable", dbUser, dbPassword, dbName, dbHost, dbPort)
+	log.Println("successfully connection to DB")
+	log.Println("dbUri :", dbUri)
 	db, err := sql.Open("postgres", dbUri)
 	if err != nil {
 		return nil, err
