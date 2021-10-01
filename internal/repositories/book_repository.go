@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"context"
-	"github.com/blr-coder/book_grpc/models"
+	"github.com/blr-coder/book_grpc/internal/domain/models"
 	"github.com/jmoiron/sqlx"
 	"time"
 )
