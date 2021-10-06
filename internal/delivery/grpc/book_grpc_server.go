@@ -46,3 +46,20 @@ func (s *BookGRPCServer) Get (ctx context.Context, request *v1.GetBookRequest) (
 		Description: book.Description,
 	}, nil
 }
+func (s *BookGRPCServer) List(ctx context.Context, request *v1.ListBookRequest) (*v1.Books, error) {
+	books, err := s.bookRepository.List(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var grpcBooks []*v1.Book
+	for _, book := range books {
+		grpcBooks = append(grpcBooks, &v1.Book{
+			Id:          book.Id,
+			Title:       book.Title,
+			Description: book.Description,
+		})
+	}
+
+	return &v1.Books{Books: grpcBooks}, nil
+}

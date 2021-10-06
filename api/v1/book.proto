@@ -7,6 +7,7 @@ option go_package = "api/v1";
 service Book {
   rpc create(createBookRequest) returns (book);
   rpc get(getBookRequest) returns (book);
+  rpc list(listBookRequest) returns (books);
 }
 
 message createBookRequest {
@@ -20,6 +21,12 @@ message book {
   string description = 3;
 }
 
+message books {
+  repeated book books = 1;
+}
+
 message getBookRequest {
   int64 id = 1;
 }
+
+message listBookRequest {}

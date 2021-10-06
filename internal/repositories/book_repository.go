@@ -40,12 +40,27 @@ func (r *BookRepository) Create(ctx context.Context, book *models.Book) (*models
 	return book, nil
 }
 
-func (r *BookRepository) Get(ctx context.Context, id int64) (book *models.Book, err error) {
-	query := `SELECT id, "title", description FROM books WHERE id=$1`
+func (r *BookRepository) Get(ctx context.Context, id int64) (*models.Book, error) {
+	query := `SELECT id, title, description FROM books WHERE id=$1`
 
-	if err = r.db.Get(&book, query, id); err != nil {
+	book := models.Book{}
+	if err := r.db.Get(&book, query, id); err != nil {
 		return nil, err
 	}
 
-	return book, nil
+	return &book, nil
+}
+
+func (r *BookRepository) List(ctx context.Context) (models.Books, error) {
+	ctx, cancel := context.WithTimeout(ctx, timeout)
+	defer cancel()
+
+	query := `SELECT id, title, description FROM books`
+
+	var books models.Books
+	err := r.db.SelectContext(ctx, &books, query); if err != nil {
+		return nil, err
+	}
+
+	return books, nil
 }
