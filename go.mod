@@ -3,6 +3,7 @@ module github.com/blr-coder/book_grpc
 go 1.17
 
 require (
+	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/lib/pq v1.2.0
@@ -13,3 +14,5 @@ require (
 	google.golang.org/grpc v1.41.0
 	google.golang.org/protobuf v1.27.1
 )
+
+require github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496 // indirect
