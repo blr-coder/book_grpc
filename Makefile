@@ -7,3 +7,5 @@ db_up:
 	sudo docker-compose up -d
 db_stop:
 	sudo docker-compose stop
+run:
+	go run cmd/book/main.go --config /home/rabushko/DEVELOPMENT/book_grpc/configs/config.toml

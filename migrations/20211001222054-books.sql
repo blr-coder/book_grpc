@@ -4,7 +4,7 @@ CREATE TABLE books
     id          BIGSERIAL PRIMARY KEY,
     title       VARCHAR(256) NOT NULL,
     description TEXT,
-    created_at  TIMESTAMP WITH TIME ZONE,
+    created_at  TIMESTAMP WITH TIME ZONE DEFAULT (now()) NOT NULL,
     updated_at  TIMESTAMP WITH TIME ZONE,
     deleted_at  TIMESTAMP WITH TIME ZONE
 );
