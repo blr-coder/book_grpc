@@ -31,7 +31,7 @@ func (u *BookUseCase) Create(ctx context.Context, createArgs *models.CreateBookA
 }
 
 func (u *BookUseCase) Get(ctx context.Context, id int64) (*models.Book, error) {
-	panic("GET!")
+	return u.bookRepository.Get(ctx, id)
 }
 
 func (u *BookUseCase) List(ctx context.Context) (models.Books, error) {

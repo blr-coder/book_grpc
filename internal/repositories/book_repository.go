@@ -41,7 +41,7 @@ func (r *BookRepository) Create(ctx context.Context, book *models.Book) (*models
 }
 
 func (r *BookRepository) Get(ctx context.Context, id int64) (*models.Book, error) {
-	query := `SELECT id, title, description FROM books WHERE id=$1`
+	query := `SELECT id, title, description, created_at FROM books WHERE id=$1`
 
 	book := models.Book{}
 	if err := r.db.Get(&book, query, id); err != nil {
