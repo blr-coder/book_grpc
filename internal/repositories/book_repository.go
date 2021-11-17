@@ -64,3 +64,16 @@ func (r *BookRepository) List(ctx context.Context) (models.Books, error) {
 
 	return books, nil
 }
+
+func (r *BookRepository) Delete(ctx context.Context, id int64) error {
+	ctx, cancel := context.WithTimeout(ctx, timeout)
+	defer cancel()
+
+	query := `DELETE FROM books WHERE id=$1`
+	_, err := r.db.ExecContext(ctx, query, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

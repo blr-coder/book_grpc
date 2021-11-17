@@ -37,3 +37,7 @@ func (u *BookUseCase) Get(ctx context.Context, id int64) (*models.Book, error) {
 func (u *BookUseCase) List(ctx context.Context) (models.Books, error) {
 	panic("LIST!")
 }
+
+func (u *BookUseCase) Delete(ctx context.Context, id int64) error {
+	return u.bookRepository.Delete(ctx, id)
+}

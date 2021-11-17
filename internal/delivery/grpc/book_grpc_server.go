@@ -2,9 +2,11 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 	v1 "github.com/blr-coder/book_grpc/api/v1"
 	"github.com/blr-coder/book_grpc/internal/domain/models"
 	"github.com/blr-coder/book_grpc/internal/domain/usecase_interfaces"
+	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -67,4 +69,18 @@ func (s *BookGRPCServer) List(ctx context.Context, request *v1.ListBookRequest) 
 	}
 
 	return &v1.Books{Books: grpcBooks}, nil
+}
+
+func (s *BookGRPCServer) Update(ctx context.Context, request *v1.UpdateBookRequest) (*v1.Book, error) {
+	fmt.Println("Update")
+	panic("Implement me")
+}
+
+func (s *BookGRPCServer) Delete(ctx context.Context, request *v1.GetBookRequest) (*empty.Empty, error) {
+	err := s.bookUseCase.Delete(ctx, request.GetId())
+	if err != nil {
+		return nil, err
+	}
+
+	return &empty.Empty{}, nil
 }
