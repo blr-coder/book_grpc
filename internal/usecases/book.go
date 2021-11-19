@@ -35,7 +35,24 @@ func (u *BookUseCase) Get(ctx context.Context, id int64) (*models.Book, error) {
 }
 
 func (u *BookUseCase) List(ctx context.Context) (models.Books, error) {
-	panic("LIST!")
+	return u.bookRepository.List(ctx)
+}
+
+func (u *BookUseCase) Update(ctx context.Context, updateArgs *models.UpdateBookArgs) (*models.Book, error) {
+	if err := updateArgs.Validate(); err != nil {
+		return nil, err
+	}
+
+	updatedBook, err := u.bookRepository.Update(ctx, &models.Book{
+		Id:          updateArgs.ID,
+		Title:       updateArgs.Title,
+		Description: updateArgs.Description,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedBook, nil
 }
 
 func (u *BookUseCase) Delete(ctx context.Context, id int64) error {

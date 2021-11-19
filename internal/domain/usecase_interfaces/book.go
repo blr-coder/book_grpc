@@ -10,5 +10,7 @@ type IBookUseCase interface {
 	Get(ctx context.Context, id int64) (*models.Book, error)
 	List(ctx context.Context) (models.Books, error)
 
+	Update(ctx context.Context, updateArgs *models.UpdateBookArgs) (*models.Book, error)
+
 	Delete(ctx context.Context, id int64) error
 }

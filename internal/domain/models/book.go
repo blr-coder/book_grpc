@@ -15,7 +15,7 @@ type Book struct {
 	Author      Author `json:"author"`*/
 
 	CreatedAt time.Time    `json:"created_at" db:"created_at"`
-	UpdatedAt time.Time    `json:"updated_at" db:"updated_at"`
+	UpdatedAt *time.Time    `json:"updated_at" db:"updated_at"`
 	DeletedAt sql.NullTime `json:"deleted_at" db:"deleted_at"`
 }
 
@@ -34,6 +34,23 @@ func (args *CreateBookArgs) Validate() error {
 		validation.Field(&args.Title, validation.Required),
 		validation.Field(&args.Description, validation.Required),
 		//validation.Field(&args.IMGFileURL, is.URL),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type UpdateBookArgs struct {
+	ID          int64  `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}
+
+func (args *UpdateBookArgs) Validate() error {
+	err := validation.ValidateStruct(args,
+		validation.Field(&args.ID, validation.Required),
 	)
 	if err != nil {
 		return err
