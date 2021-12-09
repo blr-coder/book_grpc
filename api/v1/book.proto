@@ -8,19 +8,19 @@ package api;
 option go_package = "api/v1";
 
 service Book {
-  rpc Create(createBookRequest) returns (book);
-  rpc Get(getBookRequest) returns (book);
-  rpc List(listBookRequest) returns (books);
-  rpc Update(updateBookRequest) returns (book);
-  rpc Delete(getBookRequest) returns (google.protobuf.Empty);
+  rpc Create(CreateBookRequest) returns (BookDetails);
+  rpc Get(GetBookRequest) returns (BookDetails);
+  rpc List(ListBookRequest) returns (ListBookResponse);
+  rpc Update(UpdateBookRequest) returns (BookDetails);
+  rpc Delete(GetBookRequest) returns (google.protobuf.Empty);
 }
 
-message createBookRequest {
+message CreateBookRequest {
   string title = 1;
   string description = 2;
 }
 
-message book {
+message BookDetails {
   int64 id = 1;
   string title = 2;
   string description = 3;
@@ -28,17 +28,22 @@ message book {
   google.protobuf.Timestamp updatedAt = 5;
 }
 
-message books {
-  repeated book books = 1;
-}
-
-message getBookRequest {
+message GetBookRequest {
   int64 id = 1;
 }
 
-message listBookRequest {}
+message ListBookRequest {
+  uint64 page_size = 1;
+  uint64 page_number = 2;
+  string title = 3;
+}
 
-message updateBookRequest {
+message ListBookResponse {
+  repeated BookDetails books = 1;
+  uint64 count = 2;
+}
+
+message UpdateBookRequest {
   int64 id = 1;
   string title = 2;
   string description = 3;

@@ -34,8 +34,17 @@ func (u *BookUseCase) Get(ctx context.Context, id int64) (*models.Book, error) {
 	return u.bookRepository.Get(ctx, id)
 }
 
-func (u *BookUseCase) List(ctx context.Context) (models.Books, error) {
-	return u.bookRepository.List(ctx)
+func (u *BookUseCase) List(ctx context.Context, filter *models.BookListFilter) (models.Books, uint64, error) {
+	books, err := u.bookRepository.List(ctx, filter)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	count, err := u.bookRepository.Count(ctx, filter)
+	if err != nil {
+		return nil, 0, err
+	}
+	return books, count, nil
 }
 
 func (u *BookUseCase) Update(ctx context.Context, updateArgs *models.UpdateBookArgs) (*models.Book, error) {

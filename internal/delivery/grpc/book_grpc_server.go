@@ -19,7 +19,7 @@ func NewBookGRPCServer(bookUseCase usecase_interfaces.IBookUseCase) *BookGRPCSer
 	return &BookGRPCServer{bookUseCase: bookUseCase}
 }
 
-func (s *BookGRPCServer) Create(ctx context.Context, request *v1.CreateBookRequest) (*v1.Book, error) {
+func (s *BookGRPCServer) Create(ctx context.Context, request *v1.CreateBookRequest) (*v1.BookDetails, error) {
 	book, err := s.bookUseCase.Create(ctx, &models.CreateBookArgs{
 		Title:       request.Title,
 		Description: request.Description,
@@ -31,7 +31,7 @@ func (s *BookGRPCServer) Create(ctx context.Context, request *v1.CreateBookReque
 	return modelsBookToGRPCBook(book), nil
 }
 
-func (s *BookGRPCServer) Get(ctx context.Context, request *v1.GetBookRequest) (*v1.Book, error) {
+func (s *BookGRPCServer) Get(ctx context.Context, request *v1.GetBookRequest) (*v1.BookDetails, error) {
 	book, err := s.bookUseCase.Get(ctx, request.GetId())
 	if err != nil {
 		return nil, err
@@ -40,21 +40,28 @@ func (s *BookGRPCServer) Get(ctx context.Context, request *v1.GetBookRequest) (*
 	return modelsBookToGRPCBook(book), nil
 }
 
-func (s *BookGRPCServer) List(ctx context.Context, request *v1.ListBookRequest) (*v1.Books, error) {
-	books, err := s.bookUseCase.List(ctx)
+func (s *BookGRPCServer) List(ctx context.Context, request *v1.ListBookRequest) (*v1.ListBookResponse, error) {
+	books, count, err := s.bookUseCase.List(ctx, &models.BookListFilter{
+		PageNumber: request.GetPageNumber(),
+		PageSize:   request.GetPageSize(),
+		Title:      request.GetTitle(),
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	var grpcBooks []*v1.Book
+	var grpcBooks []*v1.BookDetails
 	for _, book := range books {
 		grpcBooks = append(grpcBooks, modelsBookToGRPCBook(book))
 	}
 
-	return &v1.Books{Books: grpcBooks}, nil
+	return &v1.ListBookResponse{
+		Books: grpcBooks,
+		Count: count,
+	}, nil
 }
 
-func (s *BookGRPCServer) Update(ctx context.Context, request *v1.UpdateBookRequest) (*v1.Book, error) {
+func (s *BookGRPCServer) Update(ctx context.Context, request *v1.UpdateBookRequest) (*v1.BookDetails, error) {
 	updatedBook, err := s.bookUseCase.Update(ctx, &models.UpdateBookArgs{
 		ID:          request.Id,
 		Title:       request.Title,
@@ -76,8 +83,8 @@ func (s *BookGRPCServer) Delete(ctx context.Context, request *v1.GetBookRequest)
 	return &empty.Empty{}, nil
 }
 
-func modelsBookToGRPCBook(book *models.Book) *v1.Book {
-	return &v1.Book{
+func modelsBookToGRPCBook(book *models.Book) *v1.BookDetails {
+	return &v1.BookDetails{
 		Id:          book.Id,
 		Title:       book.Title,
 		Description: book.Description,
