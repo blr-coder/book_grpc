@@ -1,7 +1,8 @@
-package usecase_interfaces
+package usecaseinterfaces
 
 import (
 	"context"
+
 	"github.com/blr-coder/book_grpc/internal/domain/models"
 )
 

@@ -3,6 +3,9 @@ package grpc
 import (
 	"context"
 	"fmt"
+	"net"
+	"time"
+
 	v1 "github.com/blr-coder/book_grpc/api/v1"
 	"github.com/blr-coder/book_grpc/internal/config"
 	"github.com/blr-coder/book_grpc/internal/db"
@@ -15,12 +18,9 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
-	"net"
-	"time"
 )
 
 func RunServer(ctx context.Context, config *config.Config, logger *logrus.Logger) error {
-
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(
 			grpc_middleware.ChainUnaryServer(

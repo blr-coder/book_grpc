@@ -2,20 +2,21 @@ package grpc
 
 import (
 	"context"
+	"time"
+
 	v1 "github.com/blr-coder/book_grpc/api/v1"
 	"github.com/blr-coder/book_grpc/internal/domain/models"
-	"github.com/blr-coder/book_grpc/internal/domain/usecase_interfaces"
+	"github.com/blr-coder/book_grpc/internal/domain/usecaseinterfaces"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"time"
 )
 
 type BookGRPCServer struct {
-	bookUseCase usecase_interfaces.IBookUseCase
+	bookUseCase usecaseinterfaces.IBookUseCase
 	v1.UnimplementedBookServer
 }
 
-func NewBookGRPCServer(bookUseCase usecase_interfaces.IBookUseCase) *BookGRPCServer {
+func NewBookGRPCServer(bookUseCase usecaseinterfaces.IBookUseCase) *BookGRPCServer {
 	return &BookGRPCServer{bookUseCase: bookUseCase}
 }
 
@@ -85,7 +86,7 @@ func (s *BookGRPCServer) Delete(ctx context.Context, request *v1.GetBookRequest)
 
 func modelsBookToGRPCBook(book *models.Book) *v1.BookDetails {
 	return &v1.BookDetails{
-		Id:          book.Id,
+		Id:          book.ID,
 		Title:       book.Title,
 		Description: book.Description,
 		CreatedAt:   timestamppb.New(book.CreatedAt),

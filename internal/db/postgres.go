@@ -4,18 +4,21 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/jmoiron/sqlx"
 	"log"
 	"time"
+
+	"github.com/jmoiron/sqlx"
+
 	// DB driver
 	_ "github.com/lib/pq"
 )
 
-func NewDB(dbHost, dbPort, dbName, dbUser, dbPassword string ) (newDB *sqlx.DB, err error) {
-	dbUri := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=disable", dbUser, dbPassword, dbName, dbHost, dbPort)
+func NewDB(dbHost, dbPort, dbName, dbUser, dbPassword string) (newDB *sqlx.DB, err error) {
+	dbURI := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=disable",
+		dbUser, dbPassword, dbName, dbHost, dbPort)
 	log.Println("successfully connection to DB")
-	log.Println("dbUri :", dbUri)
-	db, err := sql.Open("postgres", dbUri)
+	log.Println("dbURI :", dbURI)
+	db, err := sql.Open("postgres", dbURI)
 	if err != nil {
 		return nil, err
 	}

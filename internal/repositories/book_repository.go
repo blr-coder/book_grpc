@@ -3,9 +3,10 @@ package repositories
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/blr-coder/book_grpc/internal/domain/models"
 	"github.com/jmoiron/sqlx"
-	"time"
 )
 
 const (
@@ -56,13 +57,10 @@ func (r *BookRepository) List(ctx context.Context, filter *models.BookListFilter
 	defer cancel()
 
 	query := `SELECT * FROM books`
-	query, args, err := r.decodeFilter(query, filter)
-	if err != nil {
-		return nil, err
-	}
+	query, args := r.decodeFilter(query, filter, true)
 
 	var books models.Books
-	err = r.db.SelectContext(ctx, &books, query, args...)
+	err := r.db.SelectContext(ctx, &books, query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,10 +73,10 @@ func (r *BookRepository) Count(ctx context.Context, filter *models.BookListFilte
 	defer cancel()
 
 	query := `SELECT count(*) FROM books`
-	query, args, err := r.decodeFilter(query, filter)
+	query, args := r.decodeFilter(query, filter, false)
 
 	var count uint64
-	err = r.db.GetContext(ctx, &count, query, args...)
+	err := r.db.GetContext(ctx, &count, query, args...)
 	if err != nil {
 		return 0, err
 	}
@@ -92,7 +90,7 @@ func (r *BookRepository) Update(ctx context.Context, book *models.Book) (*models
 
 	query := `UPDATE books SET title=$1, description=$2, updated_at=$3 WHERE id=$4 RETURNING *`
 
-	rows, err := r.db.QueryxContext(ctx, query, book.Title, book.Description, time.Now().UTC(), book.Id)
+	rows, err := r.db.QueryxContext(ctx, query, book.Title, book.Description, time.Now().UTC(), book.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +118,11 @@ func (r *BookRepository) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (r *BookRepository) decodeFilter(query string, filter *models.BookListFilter) (string, []interface{}, error) {
+func (r *BookRepository) decodeFilter(
+	query string,
+	filter *models.BookListFilter,
+	paginate bool,
+) (string, []interface{}) {
 	query = fmt.Sprintf("%s WHERE 1=1", query)
 	var args []interface{}
 
@@ -130,17 +132,19 @@ func (r *BookRepository) decodeFilter(query string, filter *models.BookListFilte
 		args = append(args, title)
 	}
 
-	if filter.PageSize < 1 {
-		filter.PageSize = 10
+	if paginate {
+		if filter.PageSize < 1 {
+			filter.PageSize = 10
+		}
+		if filter.PageNumber == 0 {
+			filter.PageNumber = 1
+		}
+		if filter.PageNumber > 1 {
+			query = fmt.Sprintf("%s OFFSET %d", query, (filter.PageNumber-1)*filter.PageSize)
+		}
+		query = fmt.Sprintf("%s LIMIT %d", query, filter.PageSize)
 	}
-	if filter.PageNumber == 0 {
-		filter.PageNumber = 1
-	}
-	if filter.PageNumber > 1 {
-		query = fmt.Sprintf("%s OFFSET %d", query, (filter.PageNumber-1)*filter.PageSize)
-	}
-	query = fmt.Sprintf("%s LIMIT %d", query, filter.PageSize)
 
 	query = r.db.Rebind(query)
-	return query, args, nil
+	return query, args
 }

@@ -2,12 +2,13 @@ package models
 
 import (
 	"database/sql"
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"time"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 type Book struct {
-	Id          int64  `json:"id" db:"id"`
+	ID          int64  `json:"id" db:"id"`
 	Title       string `json:"title" db:"title"`
 	Description string `json:"description" db:"description"`
 	/*PDFFileURL  string `json:"pdf_file_url"`
@@ -33,6 +34,7 @@ func (args *CreateBookArgs) Validate() error {
 	err := validation.ValidateStruct(args,
 		validation.Field(&args.Title, validation.Required),
 		validation.Field(&args.Description, validation.Required),
+		// nolint
 		//validation.Field(&args.IMGFileURL, is.URL),
 	)
 	if err != nil {

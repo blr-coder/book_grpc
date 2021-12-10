@@ -1,11 +1,12 @@
 package main
 
 import (
+	"os"
+
 	"github.com/blr-coder/book_grpc/internal/config"
 	"github.com/blr-coder/book_grpc/internal/delivery/grpc"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
-	"os"
 )
 
 var (

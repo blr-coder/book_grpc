@@ -23,4 +23,7 @@ require (
 	github.com/urfave/cli/v2 v2.3.0
 )
 
-require github.com/gogo/protobuf v1.3.2 // indirect
+require (
+	github.com/gogo/protobuf v1.3.2 // indirect
+	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
+)

@@ -1,7 +1,8 @@
-package repository_interfaces
+package repositoryinterfaces
 
 import (
 	"context"
+
 	"github.com/blr-coder/book_grpc/internal/domain/models"
 )
 

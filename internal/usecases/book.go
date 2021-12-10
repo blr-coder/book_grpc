@@ -2,15 +2,17 @@ package usecases
 
 import (
 	"context"
+
 	"github.com/blr-coder/book_grpc/internal/domain/models"
-	"github.com/blr-coder/book_grpc/internal/domain/repository_interfaces"
+	"github.com/blr-coder/book_grpc/internal/domain/repositoryinterfaces"
+	"golang.org/x/sync/errgroup"
 )
 
 type BookUseCase struct {
-	bookRepository repository_interfaces.IBookRepository
+	bookRepository repositoryinterfaces.IBookRepository
 }
 
-func NewBookUseCase(bookRepository repository_interfaces.IBookRepository) *BookUseCase {
+func NewBookUseCase(bookRepository repositoryinterfaces.IBookRepository) *BookUseCase {
 	return &BookUseCase{bookRepository: bookRepository}
 }
 
@@ -34,16 +36,24 @@ func (u *BookUseCase) Get(ctx context.Context, id int64) (*models.Book, error) {
 	return u.bookRepository.Get(ctx, id)
 }
 
-func (u *BookUseCase) List(ctx context.Context, filter *models.BookListFilter) (models.Books, uint64, error) {
-	books, err := u.bookRepository.List(ctx, filter)
-	if err != nil {
+func (u *BookUseCase) List(
+	ctx context.Context,
+	filter *models.BookListFilter,
+) (books models.Books, count uint64, err error) {
+	var errGroup errgroup.Group
+
+	errGroup.Go(func() error {
+		books, err = u.bookRepository.List(ctx, filter)
+		return err
+	})
+	errGroup.Go(func() error {
+		count, err = u.bookRepository.Count(ctx, filter)
+		return err
+	})
+	if err = errGroup.Wait(); err != nil {
 		return nil, 0, err
 	}
 
-	count, err := u.bookRepository.Count(ctx, filter)
-	if err != nil {
-		return nil, 0, err
-	}
 	return books, count, nil
 }
 
@@ -53,7 +63,7 @@ func (u *BookUseCase) Update(ctx context.Context, updateArgs *models.UpdateBookA
 	}
 
 	updatedBook, err := u.bookRepository.Update(ctx, &models.Book{
-		Id:          updateArgs.ID,
+		ID:          updateArgs.ID,
 		Title:       updateArgs.Title,
 		Description: updateArgs.Description,
 	})
